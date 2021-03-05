@@ -552,8 +552,10 @@ promtail:
         - job_name: workspaces
           pipeline_stages:
             - cri: {}
-            - labels:
-                owner: __meta_kubernetes_pod_label_owner
+            - json:
+                expressions:
+                  owner:
+                source: __meta_kubernetes_pod_label_owner
             - tenant:
                 source: owner
           kubernetes_sd_configs:
