@@ -550,11 +550,10 @@ promtail:
     snippets:
       scrapeConfigs: |
         - job_name: workspaces
-          pipelineStages:
+          pipeline_stages:
             - cri: {}
-            - json:
-                expressions:
-                  owner: __meta_kubernetes_pod_label_owner
+            - labels:
+                owner: __meta_kubernetes_pod_label_owner
             - tenant:
                 source: owner
           kubernetes_sd_configs:
@@ -577,6 +576,11 @@ promtail:
               - __meta_kubernetes_pod_name
               target_label: workspace
               action: replace
+            # drop ghost
+            - source_labels:
+              - __meta_kubernetes_pod_label_owner
+              regex: '00000000-0000-0000-0000-000000000000'
+              action: drop
             {{- toYaml .Values.config.snippets.common | nindent 4 }}
     file: |
       server:
