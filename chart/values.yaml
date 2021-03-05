@@ -555,8 +555,8 @@ promtail:
             - json:
                 expressions:
                   owner: __meta_kubernetes_pod_label_owner
-          - tenant:
-              source: owner
+            - tenant:
+                source: owner
           kubernetes_sd_configs:
             - role: pod
               namespaces:
