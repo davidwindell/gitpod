@@ -552,10 +552,6 @@ promtail:
         - job_name: workspaces
           pipeline_stages:
             - cri: {}
-            - json:
-                expressions:
-                  owner:
-                source: __meta_kubernetes_pod_label_owner
             - tenant:
                 source: owner
           kubernetes_sd_configs:
@@ -575,14 +571,13 @@ promtail:
               action: replace
             # Add workspace name as a label to it can be used for future filtering
             - source_labels:
-              - __meta_kubernetes_pod_name
+              - __meta_kubernetes_pod_label_workspaceID
               target_label: workspace
               action: replace
-            # drop ghost
             - source_labels:
               - __meta_kubernetes_pod_label_owner
-              regex: '00000000-0000-0000-0000-000000000000'
-              action: drop
+              target_label: owner
+              action: replace
             {{- toYaml .Values.config.snippets.common | nindent 4 }}
     file: |
       server:
